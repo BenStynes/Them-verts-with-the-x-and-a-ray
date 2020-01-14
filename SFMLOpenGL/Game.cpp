@@ -88,136 +88,64 @@ void Game::update()
 			rotation.setX(rotation.getX() + rotationAngle);
 		}
 
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Y))
+		{
+			rotation.setY(rotation.getY() + rotationAngle);
+		}
 
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
+		{
+			rotation.setZ(rotation.getZ() + rotationAngle);
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+		{
+			translation.setY(translation.getY() - 0.2);
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+		{
+			translation.setY(translation.getY() + 0.2);
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+		{
+			translation.setX(translation.getX() - 0.2);
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+		{
+			translation.setX(translation.getX() + 0.2);
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+		{ 
+			scale+=10;
+		}
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+		{
+			scale -= 10;
+		}
 
+		Matrix3 identity{ 1.0f,0.0f,0.0f,0.0f,1.0f,0.0f,0.0f,0.0f,1.0f };
+
+		identity = identity * matrix.Scale(scale, scale);
+
+		identity = identity * matrix.RotationX(rotation.getX());
+		identity = identity * matrix.RotationY(rotation.getY());
+		identity = identity * matrix.RotationZ(rotation.getZ());
+		
 		for (int i = 0; i < 24; i += 3)
 		{
 
 
 			vector3 localvect{ initialVertices[i],initialVertices[i + 1] ,initialVertices[i + 2] };
-			vector3 answerVector = matrix.RotationX(rotation.getX()) * localvect;
-			vertices[i] = answerVector.getX();
-			vertices[i + 1] = answerVector.getY();
+			vector3 answerVector = identity * localvect;
 			vertices[i + 2] = answerVector.getZ();
-
+			
+			answerVector.setZ(1);
+			vector3 secondAnswer = identity.Translate(translation.getX(), translation.getY()) * answerVector;
+			vertices[i] = secondAnswer.getX();
+			vertices[i + 1]=  secondAnswer.getY();
 
 		}
+				
 		
-
-
-
-
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Y))
-		{
-			for (int i = 0; i < 24; i+=3)
-			{
-				vector3 localvect{ vertices[i],vertices[i + 1] ,vertices[i + 2] };
-		       vector3 answerVector	= matrix.RotationY(rotationAngle) * localvect;
-			   vertices[i] = answerVector.getX();
-			   vertices[i + 1] = answerVector.getY();
-			   vertices[i + 2] = answerVector.getZ();
-			}
-		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
-		{
-			for (int i = 0; i < 24; i+=3)
-			{
-
-				vector3 localvect{ vertices[i],vertices[i + 1] ,vertices[i + 2] };
-				vector3 answerVector = matrix.RotationZ(rotationAngle) * localvect;
-				vertices[i] = answerVector.getX();
-				vertices[i + 1] = answerVector.getY();
-				vertices[i + 2] = answerVector.getZ();
-
-			}
-		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-		{
-			for (int i = 0; i < 24; i+=3)
-			{
-				float localZ = vertices[i + 2];
-				vertices[i+ 2] = 1;
-				vector3 localvect{ vertices[i],vertices[i + 1] ,vertices[i + 2] };
-				vector3 answerVector = matrix.Translate(0, -0.2) * localvect;
-				
-				
-				vertices[i] = answerVector.getX();
-				vertices[i + 1] =  answerVector.getY();
-				vertices[i + 2] =localZ;
-
-			}
-		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-		{
-			for (int i = 0; i < 24; i+=3)
-			{
-				float localZ = vertices[i + 2];
-				vertices[i + 2] = 1;
-				vector3 localvect{ vertices[i],vertices[i + 1] ,vertices[i + 2] };
-				vector3 answerVector = matrix.Translate(0, 0.2) * localvect;
-
-
-				vertices[i] = answerVector.getX();
-				vertices[i + 1] = answerVector.getY();
-				vertices[i + 2] = localZ;
-
-			}
-		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-		{
-			for (int i = 0; i < 24; i+=3)
-			{
-				float localZ = vertices[i + 2];
-				vertices[i + 2] = 1;
-				vector3 localvect{ vertices[i],vertices[i + 1] ,vertices[i + 2] };
-				vector3 answerVector = matrix.Translate(0.2, 0) * localvect;
-
-
-				vertices[i] = answerVector.getX();
-				vertices[i + 1] = answerVector.getY();
-				vertices[i + 2] = localZ;
-
-			}
-		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-		{
-			for (int i = 0; i < 24; i+=3)
-			{
-				float localZ = vertices[i + 2];
-				vertices[i + 2] = 1;
-				vector3 localvect{ vertices[i],vertices[i + 1] ,vertices[i + 2] };
-				vector3 answerVector = matrix.Translate(-0.2, 0) * localvect;
-
-
-				vertices[i] = answerVector.getX();
-				vertices[i + 1] = answerVector.getY();
-				vertices[i + 2] = localZ;
-
-			}
-		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-		{
-			for (int i = 0; i < 24; i+=3)
-			{
-				vector3 localvect{ vertices[i],vertices[i + 1] ,vertices[i + 2] };
-				vector3 answerVector = matrix.Scale3D(101) * localvect;
-				vertices[i] = answerVector.getX();
-				vertices[i +1]= answerVector.getY();
-				vertices[i+2] = answerVector.getZ();
-
-			}
-		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-		{
-			for (int i = 0; i < 24; i+=3)
-			{
-				vector3 localvect{ vertices[i],vertices[i + 1] ,vertices[i + 2] };
-				vector3 answerVector = matrix.Scale3D(99) * localvect;
-				vertices[i] = answerVector.getX();
-				vertices[i + 1] = answerVector.getY();
-				vertices[i + 2] = answerVector.getZ();
-			}
-		}
 	}
 
 }
